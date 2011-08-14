@@ -5,7 +5,7 @@ use Data::Dumper;
 
 my $qrz = Ham::Reference::QRZ->new (
                                    username => 'ky4j',
-                                   password => 'beeghu7P'
+                                   password => 'changeme!!!'
                                   );
 
 my $input;
