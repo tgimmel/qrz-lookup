@@ -4,8 +4,8 @@ use Ham::Reference::QRZ;
 use Data::Dumper;
 
 my $qrz = Ham::Reference::QRZ->new (
-                                   username => 'ky4j',
-                                   password => 'aYA83RXQTj'
+                                   username => 'yourcall',
+                                   password => 'ChangeMe'
                                   );
 #little add
 my $input;
@@ -42,7 +42,9 @@ sub lookup {
    }
    if ($listing->{ grid }) { print "Grid: $listing->{ grid }\n"; }
    if ($listing->{ qslmgr }) { print "QSL Mgr: $listing->{ qslmgr }\n";}
-
+   ($listing->{ lotw }) ? print "LoTW: Yes\n" : print "LoTW: No\n";
+   ($listing->{ eqsl }) ? print "eqsl: Yes\n" : print "eqsl: No\n";
+   ($listing->{ mqsl }) ? print "Mail QSL: Yes\n" : print "Mail QSL: No\n";  
 }
 
 sub session {
