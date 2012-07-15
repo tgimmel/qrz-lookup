@@ -3,17 +3,22 @@ use strict;
 use Ham::Reference::QRZ;
 use Data::Dumper;
 
+my ($input, $startime, $timenow, $sesstime);
+$startime = time;
+
 my $qrz = Ham::Reference::QRZ->new (
-                                   username => 'yourcall',
+                                   username => 'yourCall',
                                    password => 'ChangeMe'
                                   );
 #little add
-my $input;
+
 $qrz->login;
 my $session = $qrz->get_session;
 my $key = $session->{ Key };
+print "$key \n";
 #print "$key\n";
 while ()  {
+   renewses();
    print "\nEnter callsign (q to exit): ";
    chomp($input = <STDIN>);
    if ($input eq "q" || $input eq "Q") { exit; }
@@ -24,7 +29,25 @@ while ()  {
    }
    lookup($input);
 }
-
+##############
+#
+# sub renewses
+# Since we dont really know when a session expires,
+# We just take a crack at it every 45 minutes.
+#
+sub renewses {
+   $timenow = time;
+   $sesstime = $timenow - $startime;
+   print "Startime: $startime  Timenow: $timenow  SessionTime: $sesstime \n";
+   if ($sesstime > 2700) {
+      $qrz->login;
+      $session = $qrz->get_session;
+      $key = $session->{ Key };
+      print "SessID: $key \n";
+      print "Session renewed. \n";
+      $startime = time;
+   }
+}
 sub lookup {
    my $call = shift;
    chomp($call);
