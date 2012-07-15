@@ -10,13 +10,13 @@ my $qrz = Ham::Reference::QRZ->new (
                                    username => 'yourCall',
                                    password => 'ChangeMe'
                                   );
-#little add
 
 $qrz->login;
 my $session = $qrz->get_session;
 my $key = $session->{ Key };
 print "$key \n";
 #print "$key\n";
+
 while ()  {
    renewses();
    print "\nEnter callsign (q to exit): ";
@@ -38,13 +38,13 @@ while ()  {
 sub renewses {
    $timenow = time;
    $sesstime = $timenow - $startime;
-   print "Startime: $startime  Timenow: $timenow  SessionTime: $sesstime \n";
+#   print "Startime: $startime  Timenow: $timenow  SessionTime: $sesstime \n";
    if ($sesstime > 2700) {
       $qrz->login;
       $session = $qrz->get_session;
       $key = $session->{ Key };
-      print "SessID: $key \n";
-      print "Session renewed. \n";
+#      print "SessID: $key \n";
+#      print "Session renewed. \n";
       $startime = time;
    }
 }
