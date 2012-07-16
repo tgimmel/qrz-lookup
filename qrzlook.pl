@@ -7,14 +7,13 @@ my ($input, $startime, $timenow, $sesstime);
 $startime = time;
 
 my $qrz = Ham::Reference::QRZ->new (
-                                   username => 'yourCall',
+                                   username => 'ky4j',
                                    password => 'ChangeMe'
                                   );
 
 $qrz->login;
 my $session = $qrz->get_session;
 my $key = $session->{ Key };
-print "$key \n";
 #print "$key\n";
 
 while ()  {
