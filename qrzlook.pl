@@ -3,12 +3,13 @@ use strict;
 use Ham::Reference::QRZ;
 use Data::Dumper;
 
-my ($input, $startime, $timenow, $sesstime);
+my ($input, $startime, $timenow, $sesstime, %log);
 $startime = time;
+loadlogbook();
 
 my $qrz = Ham::Reference::QRZ->new (
                                    username => 'ky4j',
-                                   password => 'ChangeMe'
+                                   password => ''
                                   );
 
 $qrz->login;
@@ -66,7 +67,10 @@ sub lookup {
    if ($listing->{ qslmgr }) { print "QSL Mgr: $listing->{ qslmgr }\n";}
    ($listing->{ lotw }) ? print "LoTW: Yes\n" : print "LoTW: No\n";
    ($listing->{ eqsl }) ? print "eqsl: Yes\n" : print "eqsl: No\n";
-   ($listing->{ mqsl }) ? print "Mail QSL: Yes\n" : print "Mail QSL: No\n";  
+   ($listing->{ mqsl }) ? print "Mail QSL: Yes\n" : print "Mail QSL: No\n";
+   print "\n";
+   print "Previous QSO's:\n";
+   qsolookup(uc($call));
 }
 
 sub session {
@@ -75,15 +79,45 @@ sub session {
     return $key;
     #print Dumper($session);
 }
-   #my $bio = $qrz->get_bio;
-   #my $dxcc = $qrz->get_dxcc;
-   #my $session = $qrz->get_session;
+##################
+#
+# sub qsolookup
+# Give it a call and prints out
+# QSO Records
+# 
+sub qsolookup {
+    my $call = shift;
+    my $found = 0;
+    foreach my $rec (@{$log { $call }}) {
+         $found = 1;
+         print STDERR "$rec \n";
+      }
+    unless ($found) { print STDERR "None!\n"; }
+}
+#################
+#
+# sub loadlogbook
+# Opens jLog logbook file and reads into
+# an anonymous list with a hash for a key
+#
+sub loadlogbook {
+                        #Set file and path for you setup
+   open my $fh_log, "<", "RegularLogbook-KY4J.jdb" or die "Unable to open Logbook: $!";
+   my ($line, $c, @logrec, $date, $time, $call, $band, $mode, $qsoinfo);
+   while ($line = <$fh_log>) {
+       chomp($line);
+       $line =~ s/^\s+//g;
+       ($date, $time, $call, $band, $mode) = split(/;/,$line);
+       #Load the hash
+       $qsoinfo = "$date $time $band $mode";
+       $log{$call} = [] unless ($log{$call});  #Create empty array unless already done.
+       push (@{$log{$call}}, $qsoinfo);
+       $c++;
+   }
+   print "Loaded $c records.\n";
+   close $fh_log;
+}
 
-   #dump the data to see how it's structured
-   #print Dumper($listing);
-   #print Dumper($bio);
-   #print Dumper($dxcc);
-   #print Dumper($session);
 
 
 
